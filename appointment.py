@@ -69,9 +69,9 @@ class RequestAppointment(QWidget):
         
         # Input componets:
         # QlineEdit:
-        f_name = QLineEdit()
-        f_name.setPlaceholderText("الإســـــم")
-        f_name.setStyleSheet("QLineEdit"
+        self.f_name = QLineEdit()
+        self.f_name.setPlaceholderText("الإســـــم")
+        self.f_name.setStyleSheet("QLineEdit"
                              "{"
                              "font-family:Calibri;"
                              "border-radius:5px;"
@@ -87,9 +87,9 @@ class RequestAppointment(QWidget):
                              )
         
         
-        l_name = QLineEdit()
-        l_name.setPlaceholderText("اللقــــــــــب")
-        l_name.setStyleSheet("QLineEdit"
+        self.l_name = QLineEdit()
+        self.l_name.setPlaceholderText("اللقــــــــــب")
+        self.l_name.setStyleSheet("QLineEdit"
                              "{"
                              "font-family:Calibri;"
                              "border-radius:5px;"
@@ -104,11 +104,11 @@ class RequestAppointment(QWidget):
                              "}"
                              )
         
-        phone = QLineEdit()
-        phone.setMinimumWidth(400)
-        phone.setInputMask('00-00-00-00-00')
-        phone.setAlignment(Qt.AlignRight)
-        phone.setStyleSheet("QLineEdit"
+        self.phone = QLineEdit()
+        self.phone.setMinimumWidth(400)
+        self.phone.setInputMask('00-00-00-00-00')
+        self.phone.setAlignment(Qt.AlignRight)
+        self.phone.setStyleSheet("QLineEdit"
                              "{"
                              "font-family:Calibri;"
                              "border-radius:5px;"
@@ -180,9 +180,9 @@ class RequestAppointment(QWidget):
         sex_cb.addItems(sex_list)
         
         # DateEdit
-        date_appoint = QDateTimeEdit()
-        date_appoint.setMinimumWidth(400)
-        date_appoint.setStyleSheet("QDateTimeEdit"
+        self.date_appoint = QDateTimeEdit()
+        self.date_appoint.setMinimumWidth(400)
+        self.date_appoint.setStyleSheet("QDateTimeEdit"
                              "{"
                              "font-family:Calibri;"
                              "border-radius:5px;"
@@ -197,8 +197,8 @@ class RequestAppointment(QWidget):
                              "}"
                              )
 
-        is_first_appoint = QCheckBox("نعم")
-        is_first_appoint.setStyleSheet("QCheckBox"
+        self.is_first_appoint = QCheckBox("نعم")
+        self.is_first_appoint.setStyleSheet("QCheckBox"
                              "{"
                              "font-family:Calibri;"
                              "border-radius:5px;"
@@ -233,13 +233,13 @@ class RequestAppointment(QWidget):
                              
                              "}"
                              )
-        
+        book_btn.clicked.connect(self.add_appointment)
         # II Layout:
         # 1: Client:
         client_fn_ln_hbox = QHBoxLayout()
-        client_fn_ln_hbox.addWidget(f_name)
+        client_fn_ln_hbox.addWidget(self.f_name)
         client_fn_ln_hbox.setSpacing(50)
-        client_fn_ln_hbox.addWidget(l_name)
+        client_fn_ln_hbox.addWidget(self.l_name)
              
         
         sex_age_lbl_hbox = QHBoxLayout()
@@ -255,17 +255,17 @@ class RequestAppointment(QWidget):
         
         phone_h_box = QHBoxLayout()
         phone_h_box.addStretch()
-        phone_h_box.addWidget(phone)
+        phone_h_box.addWidget(self.phone)
         
         
         appoint_data_h_box = QHBoxLayout()
         appoint_data_h_box.addStretch()
-        appoint_data_h_box.addWidget(date_appoint)
+        appoint_data_h_box.addWidget(self.date_appoint)
         
         
         fist_appint_sb_h_box = QHBoxLayout()
         fist_appint_sb_h_box.addStretch()
-        fist_appint_sb_h_box.addWidget(is_first_appoint)
+        fist_appint_sb_h_box.addWidget(self.is_first_appoint)
         
 
         # form layout
@@ -289,8 +289,28 @@ class RequestAppointment(QWidget):
         form_layout.addRow(book_btn)
         
         self.setLayout(form_layout)
-        
-        
+    
+    def add_appointment(self,state):
+        """
+        Funtion that submit the form and show messagebox for result
+        """
+        if (self.f_name.text() !="" and self.l_name.text() !="" and self.phone.text() !="" and self.date_appoint.text() !=""):
+            
+            QMessageBox.information(self,"Success Creating Appointment","The appointment create successfuly.",QMessageBox.Ok,QMessageBox.Ok)
+            
+            try:
+                with open("dataAppointment.txt","r+") as db:
+                        line = f"{self.f_name.text()} | {self.l_name.text()} | {self.phone.text()} | {self.date_appoint.text()}"
+                        db.write(line)
+                
+                        
+            except FileNotFoundError:
+                print('file not found')
+                open('dataAppointment.txt',"w")
+        else:
+            QMessageBox.warning(self,"Error","Check the required fields.",QMessageBox.Ok,QMessageBox.Ok)
+           
+                    
              
         
 
