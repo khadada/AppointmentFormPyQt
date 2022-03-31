@@ -13,6 +13,7 @@ class RequestAppointment(QWidget):
         self.initialize_ui()
         self.show()
         
+        
     def initialize_ui(self):
         """
         Initialize the main window and to add its componets widgets
@@ -24,6 +25,7 @@ class RequestAppointment(QWidget):
                            "background:#fff"
                            "}"
                            "")
+        self.fist_appoint = False # to use it later on
         self.display_components()
     
     def display_components(self):
@@ -122,9 +124,9 @@ class RequestAppointment(QWidget):
                              "background: #74B1FF;"
                              "}"
                              )
-        address = QLineEdit()
-        address.setPlaceholderText(" العنـــوان كامل")
-        address.setStyleSheet("QLineEdit"
+        self.address = QLineEdit()
+        self.address.setPlaceholderText(" العنـــوان كامل")
+        self.address.setStyleSheet("QLineEdit"
                              "{"
                              "font-family:Calibri;"
                              "border-radius:5px;"
@@ -212,6 +214,7 @@ class RequestAppointment(QWidget):
                              "background: #74B1FF;"
                              "}"
                              )
+        self.is_first_appoint.stateChanged.connect(self.is_not_firstappoin)
         book_btn = QPushButton("إضافــــة موعـــد")
         book_btn.setStyleSheet("QPushButton"
                              "{"
@@ -279,7 +282,7 @@ class RequestAppointment(QWidget):
         form_layout.addRow(sex_age_lbl_hbox)
         form_layout.addRow(sex_age_input_hbox)
         form_layout.addRow(address_lbl)
-        form_layout.addRow(address)
+        form_layout.addRow(self.address)
         form_layout.addRow(phone_lbl)
         form_layout.addRow(phone_h_box)
         form_layout.addRow(book_appoi_lbl)
@@ -290,6 +293,13 @@ class RequestAppointment(QWidget):
         
         self.setLayout(form_layout)
     
+    def is_not_firstappoin(self,state):
+        """
+        Function to Change state of is_first_appointment checkbox
+        """
+        if state == Qt.Checked:
+            self.fist_appoint == True
+        
     def add_appointment(self,state):
         """
         Funtion that submit the form and show messagebox for result
@@ -299,9 +309,14 @@ class RequestAppointment(QWidget):
             QMessageBox.information(self,"Success Creating Appointment","The appointment create successfuly.",QMessageBox.Ok,QMessageBox.Ok)
             
             try:
-                with open("dataAppointment.txt","r+") as db:
-                        line = f"{self.f_name.text()} | {self.l_name.text()} | {self.phone.text()} | {self.date_appoint.text()}"
+                with open("dataAppointment.txt","a+") as db:
+                        line = f"{self.f_name.text()} | {self.l_name.text()} | {self.phone.text()} | {self.date_appoint.text() } | {str(self.fist_appoint)}\n"
                         db.write(line)
+                        
+                self.f_name.clear()
+                self.l_name.clear()
+                self.phone.clear()
+                self.address.clear()
                 
                         
             except FileNotFoundError:
@@ -310,7 +325,7 @@ class RequestAppointment(QWidget):
         else:
             QMessageBox.warning(self,"Error","Check the required fields.",QMessageBox.Ok,QMessageBox.Ok)
            
-                    
+                
              
         
 
