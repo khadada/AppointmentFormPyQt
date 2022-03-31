@@ -13,3 +13,9 @@ class RequestAppointment(QWidget):
 
 
 
+# Execution code lines:
+if __name__ =="__main__":
+    app = QApplication(sys.argv)
+    app_appointment = RequestAppointment()
+    sys.exit(app.exec_())
+
